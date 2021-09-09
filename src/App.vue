@@ -1,4 +1,3 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png" />
-  <Auth />
+  <router-view></router-view>
 </template>
