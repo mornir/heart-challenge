@@ -1,6 +1,12 @@
 <template>
-  <div class="flex row flex-center">
-    <button @click="signInWithDiscord">Login with Discord</button>
+  <div class="flex gap-x-4">
+    <button
+      @click="signInWithDiscord"
+      class="px-4 py-2 font-medium text-white rounded-sm bg-primary"
+    >
+      Sign In with Discord
+    </button>
+    <button @click="logout" class="px-4 py-2 border">Log out</button>
   </div>
 </template>
 
@@ -20,6 +26,9 @@ export default {
       supabase.auth.signIn({
         provider: "discord",
       })
+    },
+    logout() {
+      supabase.auth.signOut()
     },
   },
   created() {
