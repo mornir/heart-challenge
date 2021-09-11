@@ -6,7 +6,15 @@
 </template>
 
 <script>
+import { supabase } from '../supabase';
 export default {
-  name: "Home",
-}
+  name: 'Home',
+  beforeRouteEnter() {
+    if (supabase.auth.user()) {
+      return '/reviews';
+    } else {
+      return true;
+    }
+  },
+};
 </script>
