@@ -27,15 +27,17 @@
 
     <ul class="flex flex-col items-center mt-16">
       <li v-for="review in reviews" :key="review.id">
-        <span>{{ review.date }}: {{ review.rating }}</span>
-        <button class="ml-2" @click="edit(review.id)">EDIT</button>
+        <span class="text-xl">{{ review.date }}: {{ review.rating }}</span>
+        <button class="px-4 py-2 ml-2 bg-primary" @click="edit(review.id)">
+          EDIT
+        </button>
       </li>
     </ul>
   </div>
 </template>
 
 <script>
-import { supabase } from '../supabase';
+import { supabase } from '../supabase'
 export default {
   name: 'Reviews',
   data() {
@@ -43,54 +45,59 @@ export default {
       user: {},
       reviews: [],
       isTodayReviewed: false,
-    };
+    }
   },
-  async created() {
-    this.user = supabase.auth.user();
-
-    const { data, error, status } = await supabase.from('reviews').select();
-    this.reviews = data;
+  created() {
+    this.user = supabase.auth.user()
+    this.fetchReviews()
   },
   beforeRouteEnter() {
     if (supabase.auth.user()) {
-      return true;
+      return true
     } else {
-      return '/';
+      return '/'
     }
   },
 
   methods: {
     async edit(id) {
-      console.log(id);
-      const newRating = prompt('Enter new rating');
+      console.log(id)
+      const newRating = prompt('Enter new rating')
       const { data, error } = await supabase
         .from('reviews')
         .update({ rating: newRating })
-        .match({ id });
+        .match({ id })
+
+      this.fetchReviews()
+    },
+    async fetchReviews() {
+      const { data, error, status } = await supabase.from('reviews').select()
+      this.reviews = data
     },
     async addReview() {
       const { count } = await supabase
         .from('reviews')
         .select('date', { count: 'exact', head: true })
-        .filter('created_by', 'eq', this.user.id);
+        .filter('created_by', 'eq', this.user.id)
 
       if (!count) {
         await supabase
           .from('reviews')
-          .insert([{ rating: 8, date: new Date(), created_by: this.user.id }]);
+          .insert([{ rating: 8, date: new Date(), created_by: this.user.id }])
       } else {
         const { data, error } = await supabase
           .from('reviews')
           .update([{ rating: 6 }])
-          .match({ date: '2021-09-11' });
+          .match({ date: '2021-09-19' })
 
         if (!error) {
-          console.log(data);
+          console.log(data)
         } else {
-          console.log(error);
+          console.log(error)
         }
       }
+      this.fetchReviews()
     },
   },
-};
+}
 </script>
